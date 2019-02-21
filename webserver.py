@@ -5,13 +5,13 @@ class webserverHandler(BaseHTTPRequestHandler):
         try:
             if self.path.endswith("/hello"):
                 self.send_response(200)
-                self.send_headers('Content-type', 'text/html')
+                self.send_header('Content-type', 'text/html')
                 self.end_headers()
 
                 output = ""
                 output += "<html><body>Hello</body></html>"
                 self.wfile.write(output)
-                print output
+                print (output)
                 return
 
         except IOError:
@@ -25,8 +25,8 @@ def main():
         server.serve_forever()
 
     except KeyboardInterrupt:
-        print "Keyboard interupt, server stopped"
+        print ("Keyboard interupt, server stopped")
         server.socket.close()
 
-if __name__ = '__main__':
+if __name__ == '__main__':
     main()
