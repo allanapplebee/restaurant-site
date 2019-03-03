@@ -1,6 +1,18 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import cgi
 
+# import DB classes and sqlalchemy
+
+from database_setup import Base, Restaurant, MenuItem
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+# create session and connect DB
+engine = create_engine('sqlite:///restaurantmenu.db')
+Base.metadata.bind = engine
+session = DBSession()
+DBSession = sessionmaker(bind=engine)
+
 
 class webServerHandler(BaseHTTPRequestHandler):
 
