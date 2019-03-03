@@ -10,14 +10,29 @@ from sqlalchemy.orm import sessionmaker
 # create session and connect DB
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
-session = DBSession()
 DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 
 class webServerHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
+            if self.path.endswith("/restaurant"):
+                restaurants = session.query(Restaurant).all()
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = ""
+                output += "<html><body>"
+                for restaurant in restaurants:
+                    output += restaurant.name
+                    output += "</br>"
+                output += "</html></body>"
+                self.wfile.write(output)
+                print(output)
+                return
+
             if self.path.endswith("/hello"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
