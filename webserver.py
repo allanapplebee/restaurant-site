@@ -18,7 +18,7 @@ class webServerHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
-            if self.path.endswith("/restaurant"):
+            if self.path.endswith("/restaurants"):
                 restaurants = session.query(Restaurant).all()
                 output = ""
                 self.send_response(200)
@@ -26,18 +26,30 @@ class webServerHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 
                 output += "<html><body>"
+                output += "<a href='localhost:8080/restaurants/new'>Create new restaurant</a>"
+                output += "</br>"
                 for restaurant in restaurants:
                     output += restaurant.name
                     output += "</br>"
                     output += "<a href='#'>Edit</a>"
-                    
                     output += "</br>"
                     output += "<a href='#'>Delete</a>"
-                    
                     output += "</br></br>"
-                    
                 output += "</html></body>"
                 self.wfile.write(output)
+                return
+            
+            if self.path.endswith("/restaurants/new"):
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                output = ""
+                output += "<html><body>"
+                output += "<h1>Make a new restaurant</h1>"
+                output += '''<form method='POST' enctype='multipart/form-data' action='/hello'><input name="newRestaurantName" type="text" value="New Restaurant Name" ><input type="submit" value="Create"> </form>'''
+                output += "</body></html>"
+                self.wfile.write(output)
+                print(output)
                 return
 
             if self.path.endswith("/hello"):
