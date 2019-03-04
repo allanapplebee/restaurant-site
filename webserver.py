@@ -20,17 +20,24 @@ class webServerHandler(BaseHTTPRequestHandler):
         try:
             if self.path.endswith("/restaurant"):
                 restaurants = session.query(Restaurant).all()
+                output = ""
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
-                output = ""
+                
                 output += "<html><body>"
                 for restaurant in restaurants:
                     output += restaurant.name
                     output += "</br>"
+                    output += "<a href='#'>Edit</a>"
+                    
+                    output += "</br>"
+                    output += "<a href='#'>Delete</a>"
+                    
+                    output += "</br></br>"
+                    
                 output += "</html></body>"
                 self.wfile.write(output)
-                print(output)
                 return
 
             if self.path.endswith("/hello"):
