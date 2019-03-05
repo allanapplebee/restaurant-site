@@ -18,6 +18,26 @@ class webServerHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
+            if self.path.endswith("/edit"):
+                restaurantID = self.path.split("/")[2]
+                restaurantQuery = session.query(Restaurant).filter_by(id=restaurantID).one()
+                if restaurantQuery:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    output = ""
+                    output += "<html><body>"
+                    output += "<h1>"
+                    output += restaurantQuery.name
+                    output += "</h1>"
+                    output += ("<form method='POST' enctype='multipart/form-data' action='/restaurants/{}/edit')>").format(restaurantQuery.id)
+                    output += ("<input name='editRestaurant' type='text' placeholder='{}' >").format(restaurantQuery.name)
+                    output += "<input type='submit' value='Edit'> </form>"
+                    output += "</body></html>"
+                    self.wfile.write(output)
+                    print(output)
+                    return
+
             if self.path.endswith("/restaurants/new"):
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
@@ -25,7 +45,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                 output = ""
                 output += "<html><body>"
                 output += "<h1>Make a new restaurant</h1>"
-                output += "<form method='POST' enctype='multipart/form-data' action='/restaurants/new'>"
+                output += "<form method='POST' enctype='multipart/form-data' action=('/restaurants/new'>"
                 output += "<input name='newRestaurantName' type='text' placeholder='New Restaurant Name' ><input type='submit' value='Create'> </form>"
                 output += "</body></html>"
                 self.wfile.write(output)
@@ -45,7 +65,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                 for restaurant in restaurants:
                     output += restaurant.name
                     output += "</br>"
-                    output += "<a href='#'>Edit</a>"
+                    output += ("<a href='/restaurants/{}/edit'>Edit</a>").format(restaurant.id)
                     output += "</br>"
                     output += "<a href='#'>Delete</a>"
                     output += "</br></br>"
