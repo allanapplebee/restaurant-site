@@ -18,6 +18,22 @@ class webServerHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         try:
+            if self.path.endswith("/delete"):
+                restaurantID = self.path.split("/")[2]
+                restaurantQuery = session.query(Restaurant).filter_by(id=restaurantID).one()
+                if restaurantQuery:
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    output = ""
+                    output += "<html><body>"
+                    output += ("<h1>Are you sure you want to delete {}?</h1>").format(restaurantQuery.name)
+                    output += ("<form method='POST' enctype='multipart/form-data' action='/restaurants/{}/delete')>").format(restaurantQuery.id)
+                    output += "<input type='submit' value='Delete'> </form>"
+                    output += "</body></html>"
+                    self.wfile.write(output)
+                    return
+
             if self.path.endswith("/edit"):
                 restaurantID = self.path.split("/")[2]
                 restaurantQuery = session.query(Restaurant).filter_by(id=restaurantID).one()
@@ -33,6 +49,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     output += ("<form method='POST' enctype='multipart/form-data' action='/restaurants/{}/edit')>").format(restaurantQuery.id)
                     output += ("<input name='editRestaurant' type='text' placeholder='{}' >").format(restaurantQuery.name)
                     output += "<input type='submit' value='Edit'> </form>"
+                    output += "<a href='/restaurants'>Changed my mind</a>"
                     output += "</body></html>"
                     self.wfile.write(output)
                     print(output)
@@ -67,7 +84,7 @@ class webServerHandler(BaseHTTPRequestHandler):
                     output += "</br>"
                     output += ("<a href='/restaurants/{}/edit'>Edit</a>").format(restaurant.id)
                     output += "</br>"
-                    output += "<a href='#'>Delete</a>"
+                    output += ("<a href='restaurants/{}/delete'>Delete</a>").format(restaurant.id)
                     output += "</br></br>"
                 output += "</html></body>"
                 self.wfile.write(output)
