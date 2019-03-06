@@ -9,13 +9,15 @@ from database_setup import Base, Restaurant, MenuItem
 engine = create_engine('sqlite:///restaurantmenu.db')
 Base.metadata.bind = engine
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+
 
 @app.route('/')
-@app.route('/hello')
-def HelloWorld():
-    restaurant = session.query(Restaurant).first()
+@app.route('/restaurants/<int:restaurant_id>/')
+def restaurantMenu(restaurant_id):
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+    
+    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
     output = ''
     for i in items:
