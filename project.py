@@ -19,7 +19,11 @@ def HelloWorld():
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant.id)
     output = ''
     for i in items:
-        output += ('<p>{}</p>').format(i.name)
+        output += '<p>'
+        output += ('{} </br>').format(i.name)
+        output += ('{} </br>').format(i.price)
+        output += ('{} </br>').format(i.description)
+        output += '</p>'
     return output
 
 if __name__ == '__main__':
